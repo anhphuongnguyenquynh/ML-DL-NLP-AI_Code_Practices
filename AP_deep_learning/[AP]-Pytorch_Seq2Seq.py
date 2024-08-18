@@ -159,6 +159,14 @@ for epoch in range(num_epochs):
     checkpoint = {'state_dict':model.state_dict(), 'optimizer': optimizer.state_dict()}
     save_checkpoint(checkpoint)
 
+    model.eval()
+    translated_sentence = translate_sentence(model, sentence, german,
+                                             english, device, max_length = 50)
+    
+    print(f'Example')
+
+    model.train()
+
     for batch_idx, batch in enumerate(train_iterator):
         inp_data = batch.src.to(device)
         target = batch.trg.to(device)
@@ -179,7 +187,9 @@ for epoch in range(num_epochs):
 
         writer.add_scala('Training loss', loss, global_step = step)
 
-        
+
+score = bleu(test_data, model, german, english, device)
+print(f'Bleu score {score*100:.2f}')
 
 
 
